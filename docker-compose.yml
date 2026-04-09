@@ -13,6 +13,12 @@ services:
         - JWT_SECRET=${JWT_SECRET}
         - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
         - SPORTS_API_TOKEN=${SPORTS_API_TOKEN}
+        - EMAIL_TO=${EMAIL_TO}
+        - EMAIL_FROM=${EMAIL_FROM}
+        - EMAIL_HOST=${EMAIL_HOST}
+        - EMAIL_ADDRESS=${EMAIL_ADDRESS}
+        - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+        - COMPANY_NAME=${COMPANY_NAME}
     container_name: 4ksports-server
     ports:
       - "4700:4700"
