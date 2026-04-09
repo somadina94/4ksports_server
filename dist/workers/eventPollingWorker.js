@@ -14,23 +14,23 @@ export const syncUpcomingEvents = async () => {
     const providerEvents = await fetchPaginatedProviderResults(url);
     for (const providerEvent of providerEvents) {
         const mapped = mapProviderEventToEventDocument(providerEvent);
+        const existing = await Event.findOne({ providerId: mapped.providerId });
+        if (existing) {
+            if (!hasChanged(mapped, existing))
+                continue;
+            const oldOdds = existing.odds;
+            existing.set(mapped);
+            await existing.save();
+            emitSocketEvent("events:update", { eventId: existing._id, action: "updated" });
+            if (JSON.stringify(oldOdds) !== JSON.stringify(existing.odds)) {
+                emitSocketEvent("odds:update", { eventId: existing._id, odds: existing.odds });
+            }
+            continue;
+        }
         if (mapped.status !== EventStatus.NOT_STARTED)
             continue;
-        const existing = await Event.findOne({ providerId: mapped.providerId });
-        if (!existing) {
-            const created = await Event.create(mapped);
-            emitSocketEvent("events:update", { eventId: created._id, action: "created" });
-            continue;
-        }
-        if (!hasChanged(mapped, existing))
-            continue;
-        const oldOdds = existing.odds;
-        existing.set(mapped);
-        await existing.save();
-        emitSocketEvent("events:update", { eventId: existing._id, action: "updated" });
-        if (JSON.stringify(oldOdds) !== JSON.stringify(existing.odds)) {
-            emitSocketEvent("odds:update", { eventId: existing._id, odds: existing.odds });
-        }
+        const created = await Event.create(mapped);
+        emitSocketEvent("events:update", { eventId: created._id, action: "created" });
     }
 };
 export const startEventPollingWorker = (intervalMs = 30_000) => {

@@ -8,6 +8,9 @@ type ProviderEvent = {
   away_team?: string;
   event_date: string;
   status: string;
+  /** BSD API uses top-level full-time goals (see docs); optional nested alias */
+  home_score?: number | null;
+  away_score?: number | null;
   scores?: { home?: number; away?: number };
   odds_home?: number | null;
   odds_draw?: number | null;
@@ -23,9 +26,54 @@ type ProviderEvent = {
 };
 
 const normalizeStatus = (status: string): string => {
-  const normalized = status.toLowerCase();
-  if (normalized === "not_started") return EventStatus.NOT_STARTED;
-  return normalized;
+  const normalized = status.toLowerCase().replace(/[-\s]+/g, "_");
+  if (normalized === "not_started" || normalized === "notstarted") return EventStatus.NOT_STARTED;
+  if (normalized === "live" || normalized === "in_play" || normalized === "inplay")
+    return EventStatus.LIVE;
+  // BSD (and similar feeds) use period codes instead of a single "live" string
+  if (
+    normalized === "1st_half" ||
+    normalized === "2nd_half" ||
+    normalized === "first_half" ||
+    normalized === "second_half" ||
+    normalized === "halftime" ||
+    normalized === "half_time" ||
+    normalized === "ht" ||
+    normalized === "extra_time" ||
+    normalized === "extra_time_1st_half" ||
+    normalized === "extra_time_2nd_half" ||
+    normalized === "penalties" ||
+    normalized === "penalty_shootout"
+  ) {
+    return EventStatus.LIVE;
+  }
+  if (normalized === "finished" || normalized === "ft" || normalized === "full_time")
+    return EventStatus.FINISHED;
+  if (
+    normalized === "cancelled" ||
+    normalized === "canceled" ||
+    normalized === "postponed" ||
+    normalized === "abandoned"
+  )
+    return EventStatus.CANCELLED;
+  // Never pass through raw provider strings — schema only allows our enum values
+  console.warn(`[providerEventMapper] Unknown event status "${status}" -> live`);
+  return EventStatus.LIVE;
+};
+
+const asGoalCount = (value: unknown): number | undefined => {
+  if (value === null || value === undefined) return undefined;
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  return undefined;
+};
+
+/** BSD `/api/events/` returns `home_score` / `away_score`, not `scores.home` / `scores.away`. */
+const mapProviderScores = (e: ProviderEvent): { home: number; away: number } => {
+  const home =
+    asGoalCount(e.home_score) ?? asGoalCount(e.scores?.home) ?? 0;
+  const away =
+    asGoalCount(e.away_score) ?? asGoalCount(e.scores?.away) ?? 0;
+  return { home, away };
 };
 
 export const mapProviderEventToEventDocument = (providerEvent: ProviderEvent) => ({
@@ -40,10 +88,7 @@ export const mapProviderEventToEventDocument = (providerEvent: ProviderEvent) =>
   awayTeam: providerEvent.away_team ?? "Unknown Away",
   eventDate: new Date(providerEvent.event_date),
   status: normalizeStatus(providerEvent.status),
-  scores: {
-    home: providerEvent.scores?.home ?? 0,
-    away: providerEvent.scores?.away ?? 0,
-  },
+  scores: mapProviderScores(providerEvent),
   odds: {
     odds_home: providerEvent.odds_home ?? null,
     odds_draw: providerEvent.odds_draw ?? null,

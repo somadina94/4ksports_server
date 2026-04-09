@@ -48,6 +48,8 @@ export const BalanceTransactionType = {
   BET_DEBIT: "bet_debit",
   BET_PAYOUT: "bet_payout",
   BET_REFUND: "bet_refund",
+  SETTLEMENT_ADJUSTMENT_CREDIT: "settlement_adjustment_credit",
+  SETTLEMENT_ADJUSTMENT_DEBIT: "settlement_adjustment_debit",
   WITHDRAWAL_DEBIT: "withdrawal_debit",
 } as const;
 

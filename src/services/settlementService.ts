@@ -10,7 +10,7 @@ import { calculatePayout } from "../utils/ticketMath.js";
 import { incrementBalance } from "./walletBalanceService.js";
 import { emitSocketEvent } from "../sockets/io.js";
 
-const settleTicketFromSelections = (
+export const computeTicketOutcome = (
   selections: { status: string; odds: number }[],
   stake: number,
 ) => {
@@ -83,7 +83,7 @@ export const settlePendingTickets = async () => {
     if (!selections.length) continue;
     if (selections.some((s) => s.status === SelectionStatus.PENDING)) continue;
 
-    const decision = settleTicketFromSelections(selections, ticket.stake);
+    const decision = computeTicketOutcome(selections, ticket.stake);
     if (ticket.settledAt) continue;
 
     const session = await mongoose.startSession();

@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+/** Bonus = this multiplier × deposit amount (200% on top = 2× deposit). */
+export declare const FIRST_DEPOSIT_BONUS_MULTIPLIER = 2;
 export declare const createDepositRequest: (userId: mongoose.Types.ObjectId, input: {
     platformWalletId: string;
     amount: number;

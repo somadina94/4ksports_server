@@ -9,7 +9,7 @@ import { settleSelection } from "../utils/settlementRules.js";
 import { calculatePayout } from "../utils/ticketMath.js";
 import { incrementBalance } from "./walletBalanceService.js";
 import { emitSocketEvent } from "../sockets/io.js";
-const settleTicketFromSelections = (selections, stake) => {
+export const computeTicketOutcome = (selections, stake) => {
     const lostCount = selections.filter((s) => s.status === SelectionStatus.LOST).length;
     const wonCount = selections.filter((s) => s.status === SelectionStatus.WON).length;
     const voidCount = selections.filter((s) => s.status === SelectionStatus.VOID).length;
@@ -65,7 +65,7 @@ export const settlePendingTickets = async () => {
             continue;
         if (selections.some((s) => s.status === SelectionStatus.PENDING))
             continue;
-        const decision = settleTicketFromSelections(selections, ticket.stake);
+        const decision = computeTicketOutcome(selections, ticket.stake);
         if (ticket.settledAt)
             continue;
         const session = await mongoose.startSession();

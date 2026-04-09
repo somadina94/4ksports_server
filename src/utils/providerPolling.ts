@@ -10,13 +10,12 @@ const BASE_EVENTS_URL = "https://sports.bzzoiro.com/api/events/";
 const formatYmd = (date: Date): string => date.toISOString().slice(0, 10);
 
 export const buildProviderEventsUrl = (
-  fromDate = new Date(),
+  fromDate = new Date(Date.now() - 24 * 60 * 60 * 1000),
   toDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
 ): string => {
   const url = new URL(BASE_EVENTS_URL);
   url.searchParams.set("date_from", formatYmd(fromDate));
   url.searchParams.set("date_to", formatYmd(toDate));
-  url.searchParams.set("status", "notstarted");
   return url.toString();
 };
 
@@ -36,7 +35,6 @@ export const fetchPaginatedProviderResults = async <T>(
     const url = new URL(urlString);
     if (requiredDateFrom) url.searchParams.set("date_from", requiredDateFrom);
     if (requiredDateTo) url.searchParams.set("date_to", requiredDateTo);
-    url.searchParams.set("status", "notstarted");
     return url.toString();
   };
 

@@ -10,6 +10,9 @@ type ProviderEvent = {
     away_team?: string;
     event_date: string;
     status: string;
+    /** BSD API uses top-level full-time goals (see docs); optional nested alias */
+    home_score?: number | null;
+    away_score?: number | null;
     scores?: {
         home?: number;
         away?: number;
