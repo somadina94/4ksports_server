@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "sudo tsx watch src/server.ts",
-    "build": "tsc && (test -d src/views && cp -r src/views dist/ || true)",
+    "build": "tsc && cp -r src/views dist/",
     "start": "node dist/server.js",
     "test": "jest",
     "test:watch": "jest --watch"
