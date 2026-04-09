@@ -128,3 +128,9 @@ export interface ISettlementLog extends Document {
   reason: string;
   settledAt: Date;
 }
+
+export interface IAnnouncement extends Document {
+  body: string;
+  expiresAt: Date;
+  createdBy: Types.ObjectId;
+}

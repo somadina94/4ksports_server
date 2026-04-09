@@ -15,6 +15,10 @@ import {
   adminDepositRequestRouter,
   depositRequestRouter,
 } from "./routes/depositRequestRoutes.js";
+import {
+  adminAnnouncementRouter,
+  announcementRouter,
+} from "./routes/announcementRoutes.js";
 
 import type { Request, Response, NextFunction } from "express";
 
@@ -31,8 +35,10 @@ app.use("/api/v1/tickets", ticketRoutes);
 app.use("/api/v1", balanceRoutes);
 app.use("/api/v1/platform-wallets", platformWalletRouter);
 app.use("/api/v1/deposit-requests", depositRequestRouter);
+app.use("/api/v1/announcements", announcementRouter);
 app.use("/api/v1/admin/platform-wallets", adminPlatformWalletRouter);
 app.use("/api/v1/admin/deposit-requests", adminDepositRequestRouter);
+app.use("/api/v1/admin/announcements", adminAnnouncementRouter);
 app.use((req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });

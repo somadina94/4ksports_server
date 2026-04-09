@@ -4,6 +4,9 @@ import DepositRequest from "../models/depositRequestModel.js";
 import PlatformWallet from "../models/platformWalletModel.js";
 import BalanceTransaction from "../models/balanceTransactionModel.js";
 import { BalanceTransactionType, DepositRequestStatus } from "../constants/enums.js";
+
+/** Bonus = this multiplier × deposit amount (200% on top = 2× deposit). */
+export const FIRST_DEPOSIT_BONUS_MULTIPLIER = 2;
 import {
   getOrCreateBalanceWallet,
   incrementBalance,
@@ -51,11 +54,18 @@ export const approveDepositRequest = async (
       throw new AppError("Deposit request is not pending", 400);
     }
 
-    const { wallet, before, after } = await incrementBalance(
-      request.userId,
-      request.amount,
-      session,
-    );
+    const priorApprovedCount = await DepositRequest.countDocuments({
+      userId: request.userId,
+      status: DepositRequestStatus.APPROVED,
+    }).session(session);
+
+    const isFirstApprovedDeposit = priorApprovedCount === 0;
+
+    const {
+      wallet,
+      before: beforeDeposit,
+      after: afterDeposit,
+    } = await incrementBalance(request.userId, request.amount, session);
 
     request.status = DepositRequestStatus.APPROVED;
     request.reviewedBy = adminId;
@@ -63,24 +73,61 @@ export const approveDepositRequest = async (
     request.creditedAt = new Date();
     await request.save({ session });
 
-    await BalanceTransaction.create(
-      [
-        {
+    const txRows: Array<{
+      userId: mongoose.Types.ObjectId;
+      balanceWalletId: mongoose.Types.ObjectId;
+      type: (typeof BalanceTransactionType)[keyof typeof BalanceTransactionType];
+      amount: number;
+      balanceBefore: number;
+      balanceAfter: number;
+      referenceType: "deposit_request";
+      referenceId: mongoose.Types.ObjectId;
+    }> = [
+      {
+        userId: request.userId,
+        balanceWalletId: wallet._id,
+        type: BalanceTransactionType.DEPOSIT_CREDIT,
+        amount: request.amount,
+        balanceBefore: beforeDeposit,
+        balanceAfter: afterDeposit,
+        referenceType: "deposit_request",
+        referenceId: request._id,
+      },
+    ];
+
+    let finalBalance = afterDeposit;
+
+    if (isFirstApprovedDeposit) {
+      const bonusAmount = Number(
+        (request.amount * FIRST_DEPOSIT_BONUS_MULTIPLIER).toFixed(2),
+      );
+      if (bonusAmount >= 0.01) {
+        const { before: beforeBonus, after: afterBonus } = await incrementBalance(
+          request.userId,
+          bonusAmount,
+          session,
+        );
+        finalBalance = afterBonus;
+        txRows.push({
           userId: request.userId,
           balanceWalletId: wallet._id,
-          type: BalanceTransactionType.DEPOSIT_CREDIT,
-          amount: request.amount,
-          balanceBefore: before,
-          balanceAfter: after,
+          type: BalanceTransactionType.FIRST_DEPOSIT_BONUS,
+          amount: bonusAmount,
+          balanceBefore: beforeBonus,
+          balanceAfter: afterBonus,
           referenceType: "deposit_request",
           referenceId: request._id,
-        },
-      ],
-      { session },
-    );
+        });
+      }
+    }
+
+    await BalanceTransaction.create(txRows, { session, ordered: true });
 
     await session.commitTransaction();
-    emitSocketEvent("wallet:update", { userId: request.userId, balance: after });
+    emitSocketEvent("wallet:update", {
+      userId: request.userId,
+      balance: finalBalance,
+    });
     return request;
   } catch (error) {
     await session.abortTransaction();

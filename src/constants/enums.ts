@@ -44,6 +44,7 @@ export const DepositRequestStatus = {
 
 export const BalanceTransactionType = {
   DEPOSIT_CREDIT: "deposit_credit",
+  FIRST_DEPOSIT_BONUS: "first_deposit_bonus",
   BET_DEBIT: "bet_debit",
   BET_PAYOUT: "bet_payout",
   BET_REFUND: "bet_refund",
