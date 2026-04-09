@@ -1,0 +1,1 @@
+{"version":3,"file":"depositRequestModel.d.ts","sourceRoot":"","sources":["../../src/models/depositRequestModel.ts"],"names":[],"mappings":"AAAA,OAAiB,EAAE,KAAK,EAAE,MAAM,UAAU,CAAC;AAE3C,OAAO,KAAK,EAAE,eAAe,EAAE,MAAM,qBAAqB,CAAC;AAyC3D,QAAA,MAAM,cAAc,EAAE,KAAK,CAAC,eAAe,CAG1C,CAAC;AAEF,eAAe,cAAc,CAAC"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"balanceTransactionModel.d.ts","sourceRoot":"","sources":["../../src/models/balanceTransactionModel.ts"],"names":[],"mappings":"AAAA,OAAiB,EAAE,KAAK,EAAE,MAAM,UAAU,CAAC;AAE3C,OAAO,KAAK,EAAE,mBAAmB,EAAE,MAAM,qBAAqB,CAAC;AA0C/D,QAAA,MAAM,kBAAkB,EAAE,KAAK,CAAC,mBAAmB,CAIhD,CAAC;AAEJ,eAAe,kBAAkB,CAAC"}
