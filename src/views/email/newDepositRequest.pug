@@ -1,0 +1,17 @@
+extends baseEmail
+
+block content
+  p Hi Admin,
+  p A new deposit request was submitted on #{companyName}.
+  p
+    strong User:
+    |  #{username}
+  p
+    strong Amount:
+    |  #{amount} USDT
+  p
+    strong Network:
+    |  #{network}
+  p
+    strong Tx hash:
+    |  #{txHash}

@@ -2,6 +2,7 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
+import { notifyAdminSafe } from "../utils/email.js";
 
 import type { IUser } from "../types/user.js";
 import type { JwtPayload } from "jsonwebtoken";
@@ -43,6 +44,11 @@ export const signUp = catchAsync(
       username: req.body.username,
       password: req.body.password,
       passwordConfirm: req.body.passwordConfirm,
+    });
+
+    notifyAdminSafe("newUser", `[${process.env.COMPANY_NAME ?? "4K Sportsbook"}] New signup: ${user.username}`, {
+      username: user.username,
+      createdAt: new Date().toISOString(),
     });
 
     // Send response

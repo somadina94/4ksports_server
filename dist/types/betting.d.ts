@@ -1,5 +1,5 @@
 import type { Document, Types } from "mongoose";
-import type { CurrencyType, DepositRequestStatusType, EventStatusType, MarketTypeType, NetworkType, SelectionStatusType, TicketStatusType, TicketTypeType, BalanceTransactionTypeType } from "../constants/enums.js";
+import type { CurrencyType, DepositRequestStatusType, WithdrawalRequestStatusType, EventStatusType, MarketTypeType, NetworkType, SelectionStatusType, TicketStatusType, TicketTypeType, BalanceTransactionTypeType } from "../constants/enums.js";
 export interface IEvent extends Document {
     providerId: number;
     apiId: number;
@@ -91,6 +91,18 @@ export interface IDepositRequest extends Document {
     reviewedBy?: Types.ObjectId;
     reviewedAt?: Date;
     creditedAt?: Date;
+}
+export interface IWithdrawalRequest extends Document {
+    userId: Types.ObjectId;
+    balanceWalletId: Types.ObjectId;
+    userWalletId: Types.ObjectId;
+    amount: number;
+    network: NetworkType;
+    destinationAddress: string;
+    status: WithdrawalRequestStatusType;
+    reviewedBy?: Types.ObjectId;
+    reviewedAt?: Date;
+    debitedAt?: Date;
 }
 export interface IBalanceTransaction extends Document {
     userId: Types.ObjectId;

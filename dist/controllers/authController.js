@@ -2,6 +2,7 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
+import { notifyAdminSafe } from "../utils/email.js";
 // A helper function to sign jwt
 const signToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -28,6 +29,10 @@ export const signUp = catchAsync(async (req, res, next) => {
         username: req.body.username,
         password: req.body.password,
         passwordConfirm: req.body.passwordConfirm,
+    });
+    notifyAdminSafe("newUser", `[${process.env.COMPANY_NAME ?? "4K Sportsbook"}] New signup: ${user.username}`, {
+        username: user.username,
+        createdAt: new Date().toISOString(),
     });
     // Send response
     const message = `Signed up successfully`;

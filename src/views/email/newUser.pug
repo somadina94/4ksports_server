@@ -1,0 +1,9 @@
+extends baseEmail
+
+block content
+  p Hi Admin,
+  p A new user has signed up on #{companyName}.
+  p
+    strong Username:
+    |  #{username}
+  p Time: #{createdAt}

@@ -1,0 +1,17 @@
+extends baseEmail
+
+block content
+  p Hi Admin,
+  p A new withdrawal request was submitted on #{companyName}.
+  p
+    strong User:
+    |  #{username}
+  p
+    strong Amount:
+    |  #{amount} USDT
+  p
+    strong Network:
+    |  #{network}
+  p
+    strong Destination:
+    |  #{destinationAddress}

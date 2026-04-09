@@ -42,6 +42,12 @@ export const DepositRequestStatus = {
   REJECTED: "rejected",
 } as const;
 
+export const WithdrawalRequestStatus = {
+  PENDING: "pending",
+  APPROVED: "approved",
+  REJECTED: "rejected",
+} as const;
+
 export const BalanceTransactionType = {
   DEPOSIT_CREDIT: "deposit_credit",
   FIRST_DEPOSIT_BONUS: "first_deposit_bonus",
@@ -68,6 +74,8 @@ export type MarketTypeType = (typeof MarketType)[keyof typeof MarketType];
 export type CurrencyType = (typeof Currency)[keyof typeof Currency];
 export type DepositRequestStatusType =
   (typeof DepositRequestStatus)[keyof typeof DepositRequestStatus];
+export type WithdrawalRequestStatusType =
+  (typeof WithdrawalRequestStatus)[keyof typeof WithdrawalRequestStatus];
 export type BalanceTransactionTypeType =
   (typeof BalanceTransactionType)[keyof typeof BalanceTransactionType];
 export type NetworkType = (typeof Network)[keyof typeof Network];

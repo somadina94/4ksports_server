@@ -1,8 +1,11 @@
-import mongoose, { type Document } from "mongoose";
+import type { Document, Types } from "mongoose";
+import type { NetworkType } from "../constants/enums.js";
 
 export interface IWallet extends Document {
-  userId: mongoose.Schema.Types.ObjectId;
+  userId: Types.ObjectId;
   type: "usdt";
+  network: NetworkType;
+  label: string;
   walletAddress: string;
   createdAt: Date;
   updatedAt: Date;

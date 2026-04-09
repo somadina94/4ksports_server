@@ -1,2 +1,2 @@
-import mongoose, {} from "mongoose";
+export {};
 //# sourceMappingURL=wallet.js.map

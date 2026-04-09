@@ -35,6 +35,11 @@ export const DepositRequestStatus = {
     APPROVED: "approved",
     REJECTED: "rejected",
 };
+export const WithdrawalRequestStatus = {
+    PENDING: "pending",
+    APPROVED: "approved",
+    REJECTED: "rejected",
+};
 export const BalanceTransactionType = {
     DEPOSIT_CREDIT: "deposit_credit",
     FIRST_DEPOSIT_BONUS: "first_deposit_bonus",

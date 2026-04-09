@@ -35,6 +35,11 @@ export declare const DepositRequestStatus: {
     readonly APPROVED: "approved";
     readonly REJECTED: "rejected";
 };
+export declare const WithdrawalRequestStatus: {
+    readonly PENDING: "pending";
+    readonly APPROVED: "approved";
+    readonly REJECTED: "rejected";
+};
 export declare const BalanceTransactionType: {
     readonly DEPOSIT_CREDIT: "deposit_credit";
     readonly FIRST_DEPOSIT_BONUS: "first_deposit_bonus";
@@ -57,6 +62,7 @@ export type SelectionStatusType = (typeof SelectionStatus)[keyof typeof Selectio
 export type MarketTypeType = (typeof MarketType)[keyof typeof MarketType];
 export type CurrencyType = (typeof Currency)[keyof typeof Currency];
 export type DepositRequestStatusType = (typeof DepositRequestStatus)[keyof typeof DepositRequestStatus];
+export type WithdrawalRequestStatusType = (typeof WithdrawalRequestStatus)[keyof typeof WithdrawalRequestStatus];
 export type BalanceTransactionTypeType = (typeof BalanceTransactionType)[keyof typeof BalanceTransactionType];
 export type NetworkType = (typeof Network)[keyof typeof Network];
 //# sourceMappingURL=enums.d.ts.map

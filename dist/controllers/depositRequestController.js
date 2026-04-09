@@ -3,10 +3,17 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import DepositRequest from "../models/depositRequestModel.js";
 import { approveDepositRequest, createDepositRequest, rejectDepositRequest, } from "../services/depositService.js";
+import { notifyAdminSafe } from "../utils/email.js";
 export const createMyDepositRequest = catchAsync(async (req, res, next) => {
     if (!req.user)
         return next(new AppError("Unauthorized", 401));
     const request = await createDepositRequest(req.user._id, req.body);
+    notifyAdminSafe("newDepositRequest", `[${process.env.COMPANY_NAME ?? "4K Sportsbook"}] Deposit request ${request.amount} USDT`, {
+        username: req.user.username,
+        amount: request.amount,
+        network: request.network,
+        txHash: request.txHash,
+    });
     res.status(201).json({ status: "success", data: { request } });
 });
 export const getMyDepositRequests = catchAsync(async (req, res, next) => {

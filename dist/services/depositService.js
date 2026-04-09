@@ -4,14 +4,17 @@ import DepositRequest from "../models/depositRequestModel.js";
 import PlatformWallet from "../models/platformWalletModel.js";
 import BalanceTransaction from "../models/balanceTransactionModel.js";
 import { BalanceTransactionType, DepositRequestStatus } from "../constants/enums.js";
-/** Bonus = this multiplier × deposit amount (200% on top = 2× deposit). */
-export const FIRST_DEPOSIT_BONUS_MULTIPLIER = 2;
+import { FIRST_DEPOSIT_BONUS_MULTIPLIER, MAX_DEPOSIT_AMOUNT, MIN_DEPOSIT_AMOUNT, } from "../constants/depositLimits.js";
 import { getOrCreateBalanceWallet, incrementBalance, } from "./walletBalanceService.js";
 import { emitSocketEvent } from "../sockets/io.js";
+export { FIRST_DEPOSIT_BONUS_MULTIPLIER } from "../constants/depositLimits.js";
 export const createDepositRequest = async (userId, input) => {
     const platformWallet = await PlatformWallet.findById(input.platformWalletId);
     if (!platformWallet || !platformWallet.isActive) {
         throw new AppError("Platform wallet not found or inactive", 404);
+    }
+    if (input.amount < MIN_DEPOSIT_AMOUNT || input.amount > MAX_DEPOSIT_AMOUNT) {
+        throw new AppError(`Deposit amount must be between ${MIN_DEPOSIT_AMOUNT} and ${MAX_DEPOSIT_AMOUNT} USDT.`, 400);
     }
     const balanceWallet = await getOrCreateBalanceWallet(userId);
     return DepositRequest.create({
