@@ -42,8 +42,15 @@ const connectDB = async () => {
     console.log("DB connected successfully!!!");
 };
 
-connectDB();
-startWorkers();
+const bootstrap = async () => {
+  await connectDB();
+  startWorkers();
+};
+
+bootstrap().catch((error) => {
+  console.error("Failed to bootstrap server:", error);
+  server.close(() => process.exit(1));
+});
 
 // "exec": "node --trace-warnings --loader ts-node/esm ./src/server.ts"
 

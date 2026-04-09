@@ -1,4 +1,5 @@
 import Event from "../models/eventModel.js";
+import { EventStatus } from "../constants/enums.js";
 import { emitSocketEvent } from "../sockets/io.js";
 import { buildProviderEventsUrl, fetchPaginatedProviderResults } from "../utils/providerPolling.js";
 import { mapProviderEventToEventDocument } from "../utils/providerEventMapper.js";
@@ -13,6 +14,8 @@ export const syncUpcomingEvents = async () => {
     const providerEvents = await fetchPaginatedProviderResults(url);
     for (const providerEvent of providerEvents) {
         const mapped = mapProviderEventToEventDocument(providerEvent);
+        if (mapped.status !== EventStatus.NOT_STARTED)
+            continue;
         const existing = await Event.findOne({ providerId: mapped.providerId });
         if (!existing) {
             const created = await Event.create(mapped);

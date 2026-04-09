@@ -21,6 +21,10 @@ export const createPlatformWallet = catchAsync(
       ...req.body,
       createdBy: req.user._id as mongoose.Types.ObjectId,
     });
+    if (!wallet) {
+      return next(new AppError("Failed to create platform wallet", 500));
+    }
+    console.log(wallet);
     res.status(201).json({ status: "success", data: { wallet } });
   },
 );
@@ -34,10 +38,14 @@ export const getAdminPlatformWallets = catchAsync(
 
 export const updatePlatformWallet = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const wallet = await PlatformWallet.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const wallet = await PlatformWallet.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
     if (!wallet) return next(new AppError("Platform wallet not found", 404));
     res.status(200).json({ status: "success", data: { wallet } });
   },

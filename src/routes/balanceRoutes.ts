@@ -7,8 +7,7 @@ import { protect } from "../controllers/authController.js";
 
 const router = express.Router();
 
-router.use(protect);
-router.get("/balance-wallet/me", getMyBalanceWallet);
-router.get("/balance-transactions/me", getMyBalanceTransactions);
+router.get("/balance-wallet/me", protect, getMyBalanceWallet);
+router.get("/balance-transactions/me", protect, getMyBalanceTransactions);
 
 export default router;

@@ -15,6 +15,10 @@ export const createPlatformWallet = catchAsync(async (req, res, next) => {
         ...req.body,
         createdBy: req.user._id,
     });
+    if (!wallet) {
+        return next(new AppError("Failed to create platform wallet", 500));
+    }
+    console.log(wallet);
     res.status(201).json({ status: "success", data: { wallet } });
 });
 export const getAdminPlatformWallets = catchAsync(async (req, res, next) => {

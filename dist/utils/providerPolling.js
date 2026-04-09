@@ -12,7 +12,19 @@ export const fetchPaginatedProviderResults = async (initialUrl) => {
     if (!apiToken) {
         throw new Error("Missing SPORTS_API_TOKEN in environment");
     }
-    let nextUrl = initialUrl;
+    const initial = new URL(initialUrl);
+    const requiredDateFrom = initial.searchParams.get("date_from");
+    const requiredDateTo = initial.searchParams.get("date_to");
+    const enforceUpcomingQuery = (urlString) => {
+        const url = new URL(urlString);
+        if (requiredDateFrom)
+            url.searchParams.set("date_from", requiredDateFrom);
+        if (requiredDateTo)
+            url.searchParams.set("date_to", requiredDateTo);
+        url.searchParams.set("status", "notstarted");
+        return url.toString();
+    };
+    let nextUrl = enforceUpcomingQuery(initialUrl);
     const allResults = [];
     while (nextUrl) {
         const response = await fetch(nextUrl, {
@@ -25,7 +37,7 @@ export const fetchPaginatedProviderResults = async (initialUrl) => {
         }
         const page = (await response.json());
         allResults.push(...page.results);
-        nextUrl = page.next;
+        nextUrl = page.next ? enforceUpcomingQuery(page.next) : null;
     }
     return allResults;
 };

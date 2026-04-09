@@ -72,11 +72,6 @@ export const login = catchAsync(
       return next(new AppError("Incorrect username or password", 401));
     }
 
-    // Check if user is admin to deny access
-    if (user.role !== "user") {
-      return next(new AppError("This route is for customers only", 400));
-    }
-
     // Send response
     const message = "Logged in successfully";
     createSendToken(user, 200, req, res, message);

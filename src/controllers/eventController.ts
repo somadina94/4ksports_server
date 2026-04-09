@@ -5,7 +5,11 @@ import type { Request, Response, NextFunction } from "express";
 
 export const getUpcomingEvents = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const events = await Event.find({ status: "notstarted" }).sort({ eventDate: 1 });
+    const now = new Date();
+    const events = await Event.find({
+      status: "notstarted",
+      eventDate: { $gt: now },
+    }).sort({ eventDate: 1 });
     res.status(200).json({
       status: "success",
       data: { events },

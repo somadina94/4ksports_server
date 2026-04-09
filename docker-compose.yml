@@ -8,6 +8,11 @@ services:
       args:
         - NODE_ENV=${NODE_ENV}
         - PORT=${PORT}
+        - DATABASE=${DATABASE}
+        - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+        - JWT_SECRET=${JWT_SECRET}
+        - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+        - SPORTS_API_TOKEN=${SPORTS_API_TOKEN}
     container_name: 4ksports-server
     ports:
       - "4700:4700"
