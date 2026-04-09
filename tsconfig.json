@@ -49,6 +49,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true
   },
-  "include": ["src", "types/**/*.d.ts", "src/**/**/*.pug"],
+  "include": ["src", "src/**/**/*.pug"],
   "exclude": ["node_modules", "dist"]
 }
