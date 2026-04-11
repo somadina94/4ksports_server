@@ -1,5 +1,8 @@
 version: "3.8"
 
+# Default project name is the parent dir ("server"); see foodie/server — must differ to avoid sharing the same Compose project + service "api".
+name: 4ksports-server
+
 services:
   api:
     build:
